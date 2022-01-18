@@ -1,13 +1,14 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using TestTask.Data;
+using Microsoft.EntityFrameworkCore;
+using TestTask.Repository;
+using TestTask.Services;
+using AutoMapper;
+using TestTask.Dto;
 
 namespace TestTask
 {
@@ -23,7 +24,13 @@ namespace TestTask
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddRazorPages();
+            services.AddSwaggerGen();
+            services.AddDbContext<DataContext>(options => options.UseSqlServer(
+                Configuration["ConnectionStrings:DefaultConnection"]));
+            services.AddAutoMapper(typeof(DtosMappingProfile));
+            services.AddTransient<ITaskRepository, TaskRepository>();
+            services.AddTransient<ITaskService, TaskService>();
+            services.AddControllersWithViews();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,7 +56,13 @@ namespace TestTask
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapRazorPages();
+                endpoints.MapControllers();
+            });
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "TestTask");
+                c.RoutePrefix = string.Empty;
             });
         }
     }
