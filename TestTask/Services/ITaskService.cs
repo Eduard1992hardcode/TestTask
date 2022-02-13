@@ -11,5 +11,6 @@ namespace TestTask.Services
         public string CreateBalances(List<BalanceDto> balances);
         public string CreatePayments(List<PaymentDto> payments);
         public List<TurnoverStatementDto> CalculateTurnoverStatement(int accountId, DateTime date, string groupType);
+        public Task<string> LoadAccount(string accountName);
     }
 }

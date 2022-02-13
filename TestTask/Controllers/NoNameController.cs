@@ -38,5 +38,11 @@ namespace TestTask.Controllers
             var result = _taskService.CalculateTurnoverStatement(accountId, date, typePeriod);
             return Ok(result);
         }
+        [HttpGet("getInfoGitHubAccount")]
+        public async Task<ActionResult> GetAccountInfo(string accontName)
+        {
+            var result = await _taskService.LoadAccount(accontName);
+            return Ok(result);
+        }
     }
 }

@@ -9,6 +9,7 @@ using TestTask.Repository;
 using TestTask.Services;
 using AutoMapper;
 using TestTask.Dto;
+using System;
 
 namespace TestTask
 {
@@ -28,6 +29,12 @@ namespace TestTask
             services.AddDbContext<DataContext>(options => options.UseSqlServer(
                 Configuration["ConnectionStrings:DefaultConnection"]));
             services.AddAutoMapper(typeof(DtosMappingProfile));
+            services.AddHttpClient("GitHub" , client =>
+            {
+                client.BaseAddress = new Uri("https://api.github.com");
+                client.DefaultRequestHeaders.Add("Accept", "application/vnd.github.v3+json");
+                client.DefaultRequestHeaders.Add("User-Agent", "HttpClientFactoryExample");
+            });
             services.AddTransient<ITaskRepository, TaskRepository>();
             services.AddTransient<ITaskService, TaskService>();
             services.AddControllersWithViews();

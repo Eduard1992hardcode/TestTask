@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
+using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using TestTask.Dto;
 using TestTask.Models;
@@ -15,11 +15,14 @@ namespace TestTask.Services
     {
         private readonly ITaskRepository _taskRepository;
         private readonly IMapper _mapper;
-        public TaskService(ITaskRepository taskRepository,
-            IMapper mapper)
+        private readonly IHttpClientFactory _clientFactory;
+         public TaskService(ITaskRepository taskRepository,
+            IMapper mapper,
+            IHttpClientFactory clientFactory)
         {
             _taskRepository = taskRepository;
             _mapper = mapper;
+            _clientFactory = clientFactory;
 
         }
         public string CreateBalances(List<BalanceDto> dtos)
@@ -76,6 +79,12 @@ namespace TestTask.Services
             }
             return result;
 
+        }
+        public async Task<string> LoadAccount(string accountName)
+        {
+            var httpClient = _clientFactory.CreateClient("GitHub");
+            var result =  await httpClient.GetStringAsync($"users/{accountName}");
+            return result;
         }
         private static Func<PeriodEntity, string> GetGroupingExpression(string periodType)
         {
